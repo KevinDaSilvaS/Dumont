@@ -1,14 +1,25 @@
 package main
 
 import (
+	"dumont/config"
 	"dumont/database"
 	"dumont/runner"
 	"fmt"
 	"time"
 )
 
+/*
+- Add producer
+- Add transaction processing
+- Add README.md
+*/
+
 func main() {
-	db := database.Connect()
+	config.SetEnvExample()
+	config := config.LoadEnv()
+	fmt.Println(config)
+
+	db := database.Connect(config)
 	r, _ := db.GetPath()
 
 	runnerConfig := runner.RunnerConfig{

@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"dumont/config"
 	"fmt"
 	"log"
 	"strings"
@@ -19,13 +20,13 @@ type Path struct {
 }
 
 // Get a database handle. https://go.dev/doc/tutorial/database-access
-func Connect() Database {
+func Connect(config config.Config) Database {
 	cfg := mysql.NewConfig()
-	cfg.User = "root"
-	cfg.Passwd = "oi"
+	cfg.User = config.User
+	cfg.Passwd = config.Passwd
 	cfg.Net = "tcp"
-	cfg.Addr = "127.0.0.1:3306"
-	cfg.DBName = "database_name"
+	cfg.Addr = config.Host
+	cfg.DBName = config.DatabaseName
 
 	var db *sql.DB
 	var err error
