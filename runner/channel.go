@@ -7,14 +7,15 @@ import (
 	"sync"
 )
 
-func SendCommand(ch chan<- []string, executeArgs []string) {
-	ch <- executeArgs
+func SendCommand(ch chan<- CommandExecution, cmdExecution CommandExecution) {
+	ch <- cmdExecution
 }
 
-func RunCommand(ch <-chan []string, tag int) {
+func RunCommand(ch <-chan CommandExecution, tag int) {
+	fmt.Println("Received On Consumer #", tag)
 	for {
-		executeArgs := <-ch
-		cmd := exec.Command("mariadb-binlog", executeArgs...)
+		cmdExecution := <-ch
+		cmd := exec.Command("mariadb-binlog", cmdExecution.ExecuteArgs...)
 		_ = cmd.Wait()
 		out, _ := cmd.Output()
 		transactions := parser.ParseTransactions(out)
@@ -22,21 +23,22 @@ func RunCommand(ch <-chan []string, tag int) {
 		var wg sync.WaitGroup
 		for i, transaction := range transactions {
 			wg.Add(1)
-			go worker(i, transaction, &wg)
+			go worker(i, transaction, cmdExecution, &wg)
 		}
 
 		wg.Wait()
-		fmt.Println("Received On Consumer #", tag, executeArgs, transactions)
 	}
 }
 
-func StartConsumers(totalConsumers int, ch <-chan []string) {
+func StartConsumers(totalConsumers int, ch <-chan CommandExecution) {
 	for i := range totalConsumers {
 		go RunCommand(ch, i)
 	}
 }
 
-func worker(id int, transaction string, wg *sync.WaitGroup) {
+func worker(id int, transaction string, producer CommandExecution, wg *sync.WaitGroup) {
 	defer wg.Done()
-	fmt.Println("Transaction parsed:", id, parser.ParseTransactionQuery(transaction))
+	t := parser.ParseTransactionQuery(transaction)
+	producer.Producer.Publish(t)
+	fmt.Println("Transaction parsed:", id, t)
 }

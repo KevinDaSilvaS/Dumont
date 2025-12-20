@@ -2,6 +2,7 @@ package runner
 
 import (
 	"dumont/database"
+	"dumont/producers"
 	"fmt"
 )
 
@@ -9,19 +10,21 @@ type RunnerConfig struct {
 	DbConnection *database.Database
 	DateFilter   string
 	BinlogPath   string
+	Producer     *producers.Producer
 }
 
-func (r RunnerConfig) Execute(ch chan []string) []string {
+type CommandExecution struct {
+	Producer    *producers.Producer
+	ExecuteArgs []string
+}
+
+func (r RunnerConfig) Execute(ch chan CommandExecution) []string {
 	files, _ := r.DbConnection.GetBinLogFiles()
 
 	transactions := []string{}
 	for _, fileName := range files {
-		SendCommand(ch, r.GetArgs(fileName))
-		/* cmd := exec.Command("mariadb-binlog", r.GetArgs(fileName)...)
-		_ = cmd.Wait()
-		out, _ := cmd.Output()
-
-		transactions = append(transactions, parser.ParseTransactions(out)...) */
+		cmd := CommandExecution{ExecuteArgs: r.GetArgs(fileName), Producer: r.Producer}
+		SendCommand(ch, cmd)
 	}
 	return transactions
 }

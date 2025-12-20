@@ -3,6 +3,7 @@ package main
 import (
 	"dumont/config"
 	"dumont/database"
+	"dumont/producers"
 	"dumont/runner"
 	"fmt"
 	"time"
@@ -23,15 +24,17 @@ func main() {
 	config := config.LoadEnv()
 	fmt.Println(config)
 
+	producer := producers.Connect()
 	db := database.Connect(config)
 	r, _ := db.GetPath()
 
 	runnerConfig := runner.RunnerConfig{
 		DbConnection: &db,
 		BinlogPath:   r,
+		Producer:     &producer,
 	}
 
-	ch := make(chan []string)
+	ch := make(chan runner.CommandExecution)
 	runner.StartConsumers(config.MaxConsumers, ch)
 
 	for {
@@ -42,6 +45,6 @@ func main() {
 
 }
 
-func run(runnerConfig runner.RunnerConfig, ch chan []string) {
+func run(runnerConfig runner.RunnerConfig, ch chan runner.CommandExecution) {
 	runnerConfig.Execute(ch)
 }
