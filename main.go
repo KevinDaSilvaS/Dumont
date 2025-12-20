@@ -14,6 +14,7 @@ import (
 - Add README.md
 - Add Server to provide statistics and prometheus metrics(maybe redis or sqlite???)
 - Add other transaction types DELETE, CREATE TABLE, ALTER TABLE, DROP TABLE
+- Add pagination??
 */
 
 func main() {
@@ -30,7 +31,7 @@ func main() {
 	}
 
 	ch := make(chan []string)
-	runner.StartConsumers(3, ch)
+	runner.StartConsumers(config.MaxConsumers, ch)
 
 	for {
 		run(runnerConfig, ch)
