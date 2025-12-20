@@ -1,0 +1,99 @@
+services:
+  #mysql:
+  #  image: mysql
+  #  container_name: mysql
+  #  environment:
+  #    MYSQL_ROOT_PASSWORD: example-password
+  #    MYSQL_DATABASE: example-db
+  #    MYSQL_USER: example-user
+  #    MYSQL_PASSWORD: example-password-user
+  #  ports:
+  #    - "3306:3306"
+  #  volumes:
+  #    - mysql-data:/var/lib/mysql
+  #    - ./my.cnf:/etc/mysql/my.cnf
+
+  
+  #mariadb:
+  #  image: mariadb
+  #  container_name: mariadb
+  #  environment:
+  #    MARIADB_ROOT_PASSWORD: example-password #oi
+  #    MARIADB_DATABASE: example-db #database_name
+  #    MARIADB_USER: example-user
+  #    MARIADB_PASSWORD: example-password-user
+  #  ports:
+  #    - "3306:3306"
+  #  command: 
+  #    [
+  #      "--server-id=1",
+  #      "--log-bin=mariadb-bin",
+  #      "--binlog-format=ROW",
+  #      "--expire-logs-days=7",
+  #      "--max-binlog-size=100M"
+  #    ]
+  #  networks:
+  #    - app-network
+  #  #volumes:
+      #- ./mariadb.cnf:/etc/mysql/my.cnf
+    # RUN ON MARIADB TERMINAL mariadb-binlog --base64-output=decode-rows --start-datetime="2025-12-18 16:12:00" -vv mariadb-bin.000002
+    #SHOW BINARY LOGS;
+    #SHOW VARIABLES LIKE '%log_bin%';
+    
+  #adminer:
+  #  image: adminer
+  #  restart: always
+  #  ports:
+  #    - 8080:8080
+  #  networks:
+  #    - app-network
+#
+  #dumont:
+  #  image: dumont
+  #  depends_on: mariadb
+  #  ports:
+  #    - 3000:3000
+  #  user: "${UID}:${GID}"
+  #  networks:
+  #    - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+#
+  #maxwell:
+  #  image: zendesk/maxwell:latest
+  #  container_name: maxwell
+  #  depends_on:
+  #    - mysql
+  #    - rabbitmq
+  #  command:
+  #    bin/maxwell
+  #    --host=mysql
+  #    --user=root
+  #    --password=example-password
+  #    --schema_database=maxwell
+  #    --rabbitmq_host=rabbitmq
+  #    --rabbitmq_port=5672
+  #    --rabbitmq_user=admin
+  #    --rabbitmq_pass=admin
+  #    --rabbitmq_virtual_host=/
+  #    --rabbitmq_exchange=maxwell
+  #    --rabbitmq_exchange_durable=true
+  #    --filter=include:example-db.*
+  #    --producer=rabbitmq
+  #    --log_level=debug
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
