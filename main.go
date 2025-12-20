@@ -12,6 +12,8 @@ import (
 - Add producer
 - Add transaction processing
 - Add README.md
+- Add Server to provide statistics and prometheus metrics(maybe redis or sqlite???)
+- Add other transaction types DELETE, CREATE TABLE, ALTER TABLE, DROP TABLE
 */
 
 func main() {
@@ -29,7 +31,7 @@ func main() {
 
 	for {
 		run(runnerConfig)
-		time.Sleep(2 * time.Second)
+		time.Sleep(time.Duration(config.ExecuteInterval) * time.Second)
 		runnerConfig.DateFilter = time.Now().Format("2006-01-02 15:04:05")
 	}
 
