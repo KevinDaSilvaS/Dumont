@@ -1,11 +1,13 @@
 # DUMONT
 
+#### Please don't add it to your prod database yet :)
+
 ### About
 Dumont is a binlog processor for MariaDb written in Go, similar to Maxwell
 
 <img src="Alberto_Santos-Dumont_portrait.jpg" alt="Santos Dumont Brazilian Father of Aviation" width="200"/>
 
-#### Please notice Dumont by now is just a proof of concept project by now, so don't add it to your prod database yet :)
+** About the picture: **  [Santos Dumont Brazilian Father of Aviation.](https://en.wikipedia.org/wiki/Alberto_Santos-Dumont)
 
 ### What it does?
 It reads the mariadb-binlog files parse them and publishes on rabbitmq concurrently from time to time
