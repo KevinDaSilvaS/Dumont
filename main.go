@@ -10,16 +10,15 @@ import (
 )
 
 /*
-- Add README.md
 - Add Server to provide statistics and prometheus metrics(maybe redis or sqlite???)
 - Add other transaction types DELETE, CREATE TABLE, ALTER TABLE, DROP TABLE
 - Add pagination??(maria db binlog paginate results)
-- Dockerfile and compose file work( currently it doesn't :c )
+- Make Dockerfile and compose file work( currently it doesn't :c )
 - Add logs
 */
 
 func main() {
-	config.SetEnvExample()
+	//config.SetEnvExample() //Used to set env for debugging
 	config := config.LoadEnv()
 	fmt.Println(config)
 
