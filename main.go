@@ -29,14 +29,17 @@ func main() {
 		BinlogPath:   r,
 	}
 
+	ch := make(chan []string)
+	runner.StartConsumers(3, ch)
+
 	for {
-		run(runnerConfig)
+		run(runnerConfig, ch)
 		time.Sleep(time.Duration(config.ExecuteInterval) * time.Second)
 		runnerConfig.DateFilter = time.Now().Format("2006-01-02 15:04:05")
 	}
 
 }
 
-func run(runnerConfig runner.RunnerConfig) {
-	fmt.Println(len(runnerConfig.Execute()))
+func run(runnerConfig runner.RunnerConfig, ch chan []string) {
+	fmt.Println(len(runnerConfig.Execute(ch)))
 }

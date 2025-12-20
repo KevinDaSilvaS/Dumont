@@ -2,9 +2,7 @@ package runner
 
 import (
 	"dumont/database"
-	"dumont/parser"
 	"fmt"
-	"os/exec"
 )
 
 type RunnerConfig struct {
@@ -13,16 +11,17 @@ type RunnerConfig struct {
 	BinlogPath   string
 }
 
-func (r RunnerConfig) Execute() []string {
+func (r RunnerConfig) Execute(ch chan []string) []string {
 	files, _ := r.DbConnection.GetBinLogFiles()
 
 	transactions := []string{}
 	for _, fileName := range files {
-		cmd := exec.Command("mariadb-binlog", r.GetArgs(fileName)...)
+		SendCommand(ch, r.GetArgs(fileName))
+		/* cmd := exec.Command("mariadb-binlog", r.GetArgs(fileName)...)
 		_ = cmd.Wait()
 		out, _ := cmd.Output()
 
-		transactions = append(transactions, parser.ParseTransactions(out)...)
+		transactions = append(transactions, parser.ParseTransactions(out)...) */
 	}
 	return transactions
 }
