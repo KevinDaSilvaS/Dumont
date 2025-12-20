@@ -5,7 +5,7 @@
 ### About
 Dumont is a binlog processor for MariaDb written in Go, similar to Maxwell
 
-<img src="Alberto_Santos-Dumont_portrait.jpg" alt="Santos Dumont Brazilian Father of Aviation" width="200"/>
+<img src="Alberto_Santos-Dumont_portrait.jpg" alt="Santos Dumont Brazilian Father of Aviation" width="200"/> <img src="Le_Petit_Journal_Santos_Dumont_25_Novembre_1906.jpg" alt="Santos Dumont Brazilian Father of Aviation" width="200"/>
 
 ** About the picture: **  [Santos Dumont Brazilian Father of Aviation.](https://en.wikipedia.org/wiki/Alberto_Santos-Dumont)
 
