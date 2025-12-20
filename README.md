@@ -27,7 +27,7 @@ For future releases the main goals would be:
 - Add time stamp to Ts field
 
 ### JSON output provided
-It was attempt to be as Maxwell compatible as possible
+It was planned to be as Maxwell compatible as possible
 
 Insert: `  {"Database":"database_name","Table":"users","Type":"INSERT","Ts":0,"Data":{"id":"2","id_users":"2","name":"\"kevin\""},"Old":{},"RawQuery":"INSERT INTO users (id, name) VALUES (2, \"kevin\")\n"} `
 
