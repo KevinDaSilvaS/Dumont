@@ -10,7 +10,6 @@ import (
 )
 
 /*
-- Add producer
 - Add README.md
 - Add Server to provide statistics and prometheus metrics(maybe redis or sqlite???)
 - Add other transaction types DELETE, CREATE TABLE, ALTER TABLE, DROP TABLE
@@ -24,7 +23,7 @@ func main() {
 	config := config.LoadEnv()
 	fmt.Println(config)
 
-	producer := producers.Connect()
+	producer := producers.Connect(config)
 	db := database.Connect(config)
 	r, _ := db.GetPath()
 

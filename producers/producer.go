@@ -2,6 +2,7 @@ package producers
 
 import (
 	"context"
+	"dumont/config"
 	"dumont/parser"
 	"encoding/json"
 	"time"
@@ -15,16 +16,16 @@ type Producer struct {
 	Queue      amqp.Queue
 }
 
-func Connect() Producer {
-	conn, _ := amqp.Dial("amqp://admin:admin@localhost:5672/")
+func Connect(config config.Config) Producer {
+	conn, _ := amqp.Dial(config.ProducerHost)
 	ch, _ := conn.Channel()
 	q, _ := ch.QueueDeclare(
-		"dumont", // name
-		true,     // durable
-		false,    // delete when unused
-		false,    // exclusive
-		false,    // no-wait
-		nil,      // arguments
+		config.ProducerQueueName, // name
+		true,                     // durable
+		false,                    // delete when unused
+		false,                    // exclusive
+		false,                    // no-wait
+		nil,                      // arguments
 	)
 
 	return Producer{
