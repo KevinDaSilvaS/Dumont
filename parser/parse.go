@@ -3,16 +3,18 @@ package parser
 import (
 	"regexp"
 	"strings"
+	"time"
 )
 
 type Transaction struct {
 	Database string
 	Table    string
 	Type     string
-	Ts       uint64
+	Ts       int64
 	Data     map[string]any
 	Old      map[string]any
 	RawQuery string
+	DbTs     string
 }
 
 func ParseTransactions(binlog []byte) []string {
@@ -34,6 +36,7 @@ func ParseTransactionQuery(transaction string) Transaction {
 		Data:     make(map[string]any),
 		Old:      make(map[string]any),
 		RawQuery: query,
+		Ts:       time.Now().Unix(),
 	}
 
 	ParseStatementLog(queryParts[1], &t)
@@ -88,6 +91,9 @@ func setData(fields, values []string, t *Transaction) {
 
 func ParseStatementLog(query string, t *Transaction) {
 	statementLog := strings.Split(query, "### ")
+
+	//time when the query was executed on db engine YY/MM/DD hh:mm:ss
+	t.DbTs = strings.Split(statementLog[0], " server")[0]
 	firstLine := strings.Split(statementLog[1], " ")
 	getQueryType(firstLine[0], firstLine[1], t)
 

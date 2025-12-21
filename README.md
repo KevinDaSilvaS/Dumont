@@ -25,7 +25,7 @@ For future releases the main goals would be:
 - ~~Add logs instead of Println~~ [ :white_check_mark: ] Done :rocket:
 - Add more producers
 - Add previous values to the Old field map on updates
-- Add time stamp to Ts field
+- ~~Add time stamp to Ts field~~ [ :white_check_mark: ] Done :rocket:
 
 ### JSON output provided
 It was planned to be as Maxwell compatible as possible
@@ -37,7 +37,8 @@ Update: ` {"Database":"database_name","Table":"users","Type":"UPDATE","Ts":0,"Da
 - Database = db name
 - Table    = table
 - Type     = action(INSERT, UPDATE, etc)
-- Ts       = timestamp of execution, currently not being filled
+- Ts       = timestamp of execution
+- DbTs     = time when the query was executed on db engine YY/MM/DD hh:mm:ss
 - Data     = map containing the modified/inserted data
 - Old      = map containing the previous data before an updates, also currently not being filled
 - RawQuery = new field added containing the raw query executed on db for debug
