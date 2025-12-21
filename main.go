@@ -27,9 +27,10 @@ func main() {
 	r, _ := db.GetPath()
 
 	runnerConfig := runner.RunnerConfig{
-		DbConnection: &db,
-		BinlogPath:   r,
-		Producer:     &producer,
+		DbConnection:         &db,
+		BinlogPath:           r,
+		Producer:             &producer,
+		ReadFromRemoteConfig: &config,
 	}
 
 	ch := make(chan runner.CommandExecution)
