@@ -16,13 +16,8 @@ type Transaction struct {
 }
 
 func ParseTransactions(binlog []byte) []string {
-	results := strings.Split(string(binlog), "START TRANSACTION")
-	size := len(results)
-	transactions := make([]string, 0)
-	for i := 1; i < size; i++ {
-		transactions = append(transactions, results[i])
-	}
-	return transactions
+	transactions := strings.Split(string(binlog), "START TRANSACTION")
+	return transactions[1:]
 }
 
 func ParseTransactionQuery(transaction string) Transaction {
