@@ -5,18 +5,12 @@ import (
 	"dumont/config"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/go-sql-driver/mysql"
 )
 
 type Database struct {
 	Connection *sql.DB
-}
-
-type Path struct {
-	Variable_name string
-	Value         string
 }
 
 // Get a database handle. https://go.dev/doc/tutorial/database-access
@@ -41,25 +35,6 @@ func Connect(config config.Config) Database {
 	}
 
 	return Database{Connection: db}
-}
-
-func (db *Database) GetPath() (string, error) {
-	var variable Path
-	row := db.Connection.QueryRow("SHOW VARIABLES WHERE Variable_name = 'log_bin_basename';")
-	if err := row.Scan(&variable.Variable_name, &variable.Value); err != nil {
-		return "", fmt.Errorf("getBinLogPath %v", err)
-	}
-	return variable.ParseBinLogPath(), nil
-}
-
-func (p Path) ParseBinLogPath() string {
-	parts := strings.Split(p.Value, "/")
-	var basePath strings.Builder
-	for i := 0; i < len(parts)-1; i++ {
-		basePath.WriteString(parts[i] + "/")
-	}
-
-	return basePath.String()
 }
 
 type BinLogFile struct {

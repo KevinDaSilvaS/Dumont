@@ -10,7 +10,6 @@ import (
 type RunnerConfig struct {
 	DbConnection         *database.Database
 	DateFilter           string
-	BinlogPath           string
 	Producer             *producers.Producer
 	ReadFromRemoteConfig *config.Config
 }
@@ -33,25 +32,19 @@ func (r RunnerConfig) Execute(ch chan CommandExecution) []string {
 
 func (r RunnerConfig) GetArgs(fileName string) []string {
 	args := []string{"--base64-output=decode-rows"}
-	if r.ReadFromRemoteConfig != nil && r.ReadFromRemoteConfig.ReadFromRemote {
-		args = append(args, "--read-from-remote-server")
-		args = append(args, fmt.Sprintf("--host=%s", r.ReadFromRemoteConfig.Host))
-		args = append(args, fmt.Sprintf("--user=%s", r.ReadFromRemoteConfig.User))
-		args = append(args, fmt.Sprintf("--password=%s", r.ReadFromRemoteConfig.Passwd))
-		args = append(args, fmt.Sprintf("--port=%s", r.ReadFromRemoteConfig.Port))
-	}
+
+	args = append(args, "--read-from-remote-server")
+	args = append(args, fmt.Sprintf("--host=%s", r.ReadFromRemoteConfig.Host))
+	args = append(args, fmt.Sprintf("--user=%s", r.ReadFromRemoteConfig.User))
+	args = append(args, fmt.Sprintf("--password=%s", r.ReadFromRemoteConfig.Passwd))
+	args = append(args, fmt.Sprintf("--port=%s", r.ReadFromRemoteConfig.Port))
 
 	if r.DateFilter != "" {
 		args = append(args, fmt.Sprintf("--start-datetime=\"%s\"", r.DateFilter))
 	}
 
 	args = append(args, "-vv")
-
-	if r.ReadFromRemoteConfig.ReadFromRemote {
-		args = append(args, fileName)
-	} else {
-		args = append(args, fmt.Sprintf("%s%s", r.BinlogPath, fileName))
-	}
+	args = append(args, fileName)
 
 	return args
 }
