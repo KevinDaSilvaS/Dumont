@@ -25,7 +25,7 @@ func Connect(config config.Config) Database {
 	cfg.User = config.User
 	cfg.Passwd = config.Passwd
 	cfg.Net = "tcp"
-	cfg.Addr = config.Host
+	cfg.Addr = config.Host + ":" + config.Port
 	cfg.DBName = config.DatabaseName
 
 	var db *sql.DB
