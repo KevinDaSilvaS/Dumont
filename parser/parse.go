@@ -24,10 +24,8 @@ func ParseTransactionQuery(transaction string) Transaction {
 	transactionParts := strings.Split(transaction, "#Q> ")
 
 	totalParts := len(transactionParts)
-	var query string
-	for i := 1; i < totalParts-1; i++ {
-		query = query + transactionParts[i]
-	}
+	query := strings.Join(transactionParts[1:totalParts-1], "")
+
 	queryParts := strings.SplitN(transactionParts[totalParts-1], "#", 2)
 	query = query + queryParts[0]
 	query = strings.ReplaceAll(strings.ReplaceAll(query, "\n", " "), "`", "")
@@ -74,13 +72,8 @@ func parseUpdate(query string, t *Transaction) {
 	values := make([]string, 0)
 
 	for _, data := range fieldsAndValues {
-		if data == "" {
-			continue
-		}
-
-		fieldValue := strings.Split(strings.Trim(data, " "), "=")
+		fieldValue := strings.Split(data, "=")
 		fields = append(fields, string(fieldValue[0]))
-
 		values = append(values, string(fieldValue[1]))
 	}
 
