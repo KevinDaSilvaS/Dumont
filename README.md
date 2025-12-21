@@ -30,9 +30,9 @@ For future releases the main goals would be:
 ### JSON output provided
 It was planned to be as Maxwell compatible as possible
 
-Insert: `  {"Database":"database_name","Table":"users","Type":"INSERT","Ts":0,"Data":{"id":"2","id_users":"2","name":"\"kevin\""},"Old":{},"RawQuery":"INSERT INTO users (id, name) VALUES (2, \"kevin\")\n"} `
+Insert: ` {"Database":"example-db","Table":"names","Type":"INSERT","Ts":1766336918,"Data":{"id_names":"1","name":"'oi'"},"Old":{},"RawQuery":"INSERT INTO names (name) VALUES ('oi') ","DbTs":"251221  9:27:34"} `
 
-Update: ` {"Database":"database_name","Table":"users","Type":"UPDATE","Ts":0,"Data":{"id_users":"1","name":"'Stanislaw Lem'"},"Old":{},"RawQuery":"update users set name = 'Stanislaw Lem' WHERE id = 1\n"} ` 
+Update: ` {"Database":"example-db","Table":"names","Type":"UPDATE","Ts":1766336918,"Data":{"id":"'1'","id_names":"1","name":"'Santos Dumont'"},"Old":{},"RawQuery":"UPDATE names SET id = '1', name = 'Santos Dumont' WHERE id = '1' ","DbTs":"251221  9:27:49"} ` 
 
 - Database = db name
 - Table    = table
@@ -54,7 +54,6 @@ Update: ` {"Database":"database_name","Table":"users","Type":"UPDATE","Ts":0,"Da
 - MAX_CONSUMERS       = "3" Number of concurrent reader consumers for bin log files, Ex: if I have 6 binlog files and three consumers it will likely be distributed between the consumers so each will read 2 files
 - PRODUCER_HOST       = "amqp://admin:admin@localhost:5672/"
 - PRODUCER_QUEUE_NAME = "dumont"
-- READ_FROM_REMOTE    = "TRUE" set to TRUE if your db is on a remote server
 
 ### Running it
 - cd dumont
