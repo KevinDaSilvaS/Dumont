@@ -24,11 +24,9 @@ func main() {
 
 	producer := producers.Connect(config)
 	db := database.Connect(config)
-	r, _ := db.GetPath()
 
 	runnerConfig := runner.RunnerConfig{
 		DbConnection:         &db,
-		BinlogPath:           r,
 		Producer:             &producer,
 		ReadFromRemoteConfig: &config,
 	}
