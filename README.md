@@ -20,10 +20,11 @@ For future releases the main goals would be:
 
 - Add web server to provide statistics and prometheus metrics
 - Add support to other remaining actions(DELETE, CREATE TABLE, ALTER TABLE, DROP TABLE, etc)
+- Add fetch from remote feature as it will be unlikely the db will be at the same level than dumont
 - Make Dockerfile and compose file work
 - Add logs instead of Println
 - Add more producers
-- Add previous values to the Old object on updates
+- Add previous values to the Old field map on updates
 - Add time stamp to Ts field
 
 ### JSON output provided
