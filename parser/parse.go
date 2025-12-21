@@ -28,8 +28,14 @@ func ParseTransactions(binlog []byte) []string {
 func ParseTransactionQuery(transaction string) Transaction {
 	transactionParts := strings.Split(transaction, "#Q> ")
 
-	queryParts := strings.SplitN(transactionParts[1], "#", 2)
-	query := queryParts[0]
+	totalParts := len(transactionParts)
+	var query string
+	for i := 1; i < totalParts-1; i++ {
+		query = query + transactionParts[i]
+	}
+	queryParts := strings.SplitN(transactionParts[totalParts-1], "#", 2)
+	query = query + queryParts[0]
+	query = strings.ReplaceAll(strings.ReplaceAll(query, "\n", " "), "`", "")
 
 	t := Transaction{
 		Data:     make(map[string]any),
@@ -61,29 +67,26 @@ func parseInsert(query string, t *Transaction) {
 }
 
 func parseUpdate(query string, t *Transaction) {
-	splittedQuery := strings.Split(query, "=")
-	firstField := strings.Split(splittedQuery[0], " ")
-	splittedQuery[0] = firstField[len(firstField)-2]
-
-	delimiterPattern := "(?i)where"
+	delimiterPattern := "(?i)set"
 	re := regexp.MustCompile(delimiterPattern)
-	lastValue := re.Split(splittedQuery[1], -1)
-	splittedQuery[len(splittedQuery)-2] = lastValue[0]
+	setStatement := re.Split(query, -1)[1]
+
+	delimiterPattern = "(?i)where"
+	re = regexp.MustCompile(delimiterPattern)
+	fieldsAndValues := strings.Split(re.Split(setStatement, -1)[0], ",")
 
 	fields := make([]string, 0)
 	values := make([]string, 0)
 
-	for index, data := range splittedQuery {
+	for _, data := range fieldsAndValues {
 		if data == "" {
 			continue
 		}
 
-		if index%2 == 0 {
-			fields = append(fields, data)
-			continue
-		}
+		fieldValue := strings.Split(strings.Trim(data, " "), "=")
+		fields = append(fields, string(fieldValue[0]))
 
-		values = append(values, data)
+		values = append(values, string(fieldValue[1]))
 	}
 
 	setData(fields, values, t)
