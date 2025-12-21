@@ -22,7 +22,7 @@ For future releases the main goals would be:
 - Add support to other remaining actions(DELETE, CREATE TABLE, ALTER TABLE, DROP TABLE, etc)
 - ~~Add fetch from remote feature as it will be unlikely the db will be at the same level than dumont~~ [ :white_check_mark: ] Done :rocket:
 - Make Dockerfile and compose file work
-- Add logs instead of Println
+- ~~Add logs instead of Println~~ [ :white_check_mark: ] Done :rocket:
 - Add more producers
 - Add previous values to the Old field map on updates
 - Add time stamp to Ts field

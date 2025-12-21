@@ -2,7 +2,7 @@ package runner
 
 import (
 	"dumont/parser"
-	"fmt"
+	"log/slog"
 	"os/exec"
 	"sync"
 )
@@ -12,7 +12,7 @@ func SendCommand(ch chan<- CommandExecution, cmdExecution CommandExecution) {
 }
 
 func RunCommand(ch <-chan CommandExecution, tag int) {
-	fmt.Println("Received On Consumer #", tag)
+	slog.Info("Received command on consumer", slog.Int("#", tag))
 	for {
 		cmdExecution := <-ch
 		cmd := exec.Command("mariadb-binlog", cmdExecution.ExecuteArgs...)
@@ -40,5 +40,5 @@ func worker(id int, transaction string, producer CommandExecution, wg *sync.Wait
 	defer wg.Done()
 	t := parser.ParseTransactionQuery(transaction)
 	producer.Producer.Publish(t)
-	fmt.Println("Transaction parsed:", id, t)
+	slog.Info("Transaction processed", slog.Int("worker_id", id), slog.Any("t", t))
 }

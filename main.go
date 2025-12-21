@@ -5,7 +5,7 @@ import (
 	"dumont/database"
 	"dumont/producers"
 	"dumont/runner"
-	"fmt"
+	"log/slog"
 	"time"
 )
 
@@ -14,13 +14,13 @@ import (
 - Add other transaction types DELETE, CREATE TABLE, ALTER TABLE, DROP TABLE
 - Add pagination??(maria db binlog paginate results)
 - Make Dockerfile and compose file work( currently it doesn't :c )
-- Add logs
 */
 
 func main() {
 	//config.SetEnvExample() //Used to set env for debugging
 	config := config.LoadEnv()
-	fmt.Println(config)
+
+	slog.Info("Dumont starting")
 
 	producer := producers.Connect(config)
 	db := database.Connect(config)
