@@ -50,6 +50,8 @@ func ParseStatement(query string, t *Transaction) {
 		parseInsert(query, t)
 	case "UPDATE":
 		parseUpdate(query, t)
+	case "DELETE":
+		return
 	default:
 		return
 	}
@@ -92,7 +94,7 @@ func setData(fields, values []string, t *Transaction) {
 func ParseStatementLog(query string, t *Transaction) {
 	statementLog := strings.Split(query, "### ")
 
-	//time when the query was executed on db engine YY/MM/DD hh:mm:ss
+	//time when the query was executed on db engine YYMMDD hh:mm:ss
 	t.DbTs = strings.Split(statementLog[0], " server")[0]
 	firstLine := strings.Split(statementLog[1], " ")
 	getQueryType(firstLine[0], firstLine[1], t)
@@ -107,14 +109,29 @@ func parseContext(statementLog []string, t *Transaction) {
 		t.Data["id_"+t.Table] = strings.Split(strings.Split(statementLog[3], " /*")[0], "=")[1]
 	case "UPDATE":
 		t.Data["id_"+t.Table] = strings.Split(strings.Split(statementLog[3], " /*")[0], "=")[1]
+	case "DELETE":
 	default:
 		return
+	}
+
+	setOld(statementLog, t)
+}
+
+func setOld(statementLog []string, t *Transaction) {
+	for i := len(statementLog) - 1; i > 2; i-- {
+		line := strings.TrimSpace(statementLog[i])
+		if line[0] != '@' {
+			break
+		}
+		clearedLine := strings.Split(line, "/*")[0]
+		fieldValue := strings.Split(strings.TrimSpace(clearedLine), "=")
+		t.Old[fieldValue[0]] = fieldValue[1]
 	}
 }
 
 func setDbAndTable(firstLine []string, t *Transaction) {
 	switch t.Type {
-	case "INSERT":
+	case "INSERT", "DELETE":
 		dbData := strings.Split(firstLine[2], "`")
 		t.Database = dbData[1]
 		t.Table = dbData[3]
@@ -123,6 +140,7 @@ func setDbAndTable(firstLine []string, t *Transaction) {
 		t.Database = dbData[1]
 		t.Table = dbData[3]
 	default:
+		return
 	}
 }
 
@@ -132,6 +150,8 @@ func getQueryType(q1, q2 string, t *Transaction) {
 		t.Type = "INSERT"
 	case "UPDATE":
 		t.Type = "UPDATE"
+	case "DELETE":
+		t.Type = "DELETE"
 	default:
 		t.Type = q1 + "_" + q2
 	}
