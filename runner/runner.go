@@ -15,8 +15,9 @@ type RunnerConfig struct {
 }
 
 type CommandExecution struct {
-	Producer    *producers.Producer
-	ExecuteArgs []string
+	Producer     *producers.Producer
+	ExecuteArgs  []string
+	RunnerConfig *RunnerConfig
 }
 
 func (r RunnerConfig) Execute(ch chan CommandExecution) []string {
@@ -24,7 +25,7 @@ func (r RunnerConfig) Execute(ch chan CommandExecution) []string {
 
 	transactions := []string{}
 	for _, fileName := range files {
-		cmd := CommandExecution{ExecuteArgs: r.GetArgs(fileName), Producer: r.Producer}
+		cmd := CommandExecution{ExecuteArgs: r.GetArgs(fileName), Producer: r.Producer, RunnerConfig: &r}
 		SendCommand(ch, cmd)
 	}
 	return transactions

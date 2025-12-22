@@ -36,9 +36,9 @@ func StartConsumers(totalConsumers int, ch <-chan CommandExecution) {
 	}
 }
 
-func worker(id int, transaction string, producer CommandExecution, wg *sync.WaitGroup) {
+func worker(id int, transaction string, executor CommandExecution, wg *sync.WaitGroup) {
 	defer wg.Done()
-	t := parser.ParseTransactionQuery(transaction)
-	producer.Producer.Publish(t)
+	t := parser.ParseTransactionQuery(transaction, executor.RunnerConfig.DbConnection)
+	executor.Producer.Publish(t)
 	slog.Info("Transaction processed", slog.Int("worker_id", id), slog.Any("t", t))
 }

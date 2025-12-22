@@ -60,3 +60,31 @@ func (db *Database) GetBinLogFiles() ([]string, error) {
 	}
 	return files, nil
 }
+
+type TableFieldName struct {
+	COLUMN_NAME string
+}
+
+func (db *Database) GetFieldNames(table, dbName string) ([]string, error) {
+	fields := make([]string, 0)
+
+	rows, err := db.Connection.Query(
+		fmt.Sprintf(
+			"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%s' AND TABLE_SCHEMA = '%s' ORDER BY ORDINAL_POSITION;",
+			table,
+			dbName))
+
+	if err != nil {
+		return nil, fmt.Errorf("GetFieldNames %v", err)
+	}
+
+	for rows.Next() {
+		var field TableFieldName
+		if err := rows.Scan(&field.COLUMN_NAME); err != nil {
+			continue
+		}
+
+		fields = append(fields, field.COLUMN_NAME)
+	}
+	return fields, nil
+}
