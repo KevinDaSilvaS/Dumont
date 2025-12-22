@@ -41,7 +41,7 @@ func (r RunnerConfig) GetArgs(fileName string) []string {
 	args = append(args, fmt.Sprintf("--port=%s", r.ReadFromRemoteConfig.Port))
 
 	if r.DateFilter != "" {
-		args = append(args, fmt.Sprintf("--start-datetime=\"%s\"", r.DateFilter))
+		args = append(args, fmt.Sprintf("--start-datetime=%s", r.DateFilter))
 	}
 
 	args = append(args, "-vv")
