@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"dumont/database"
 	"regexp"
 	"strings"
 	"time"
@@ -22,7 +23,7 @@ func ParseTransactions(binlog []byte) []string {
 	return transactions[1:]
 }
 
-func ParseTransactionQuery(transaction string) Transaction {
+func ParseTransactionQuery(transaction string, dbConnection *database.Database) Transaction {
 	transactionParts := strings.Split(transaction, "#Q> ")
 
 	totalParts := len(transactionParts)
@@ -39,7 +40,7 @@ func ParseTransactionQuery(transaction string) Transaction {
 		Ts:       time.Now().Unix(),
 	}
 
-	ParseStatementLog(queryParts[1], &t)
+	ParseStatementLog(queryParts[1], &t, dbConnection)
 	ParseStatement(query, &t)
 	return t
 }
@@ -91,7 +92,7 @@ func setData(fields, values []string, t *Transaction) {
 	}
 }
 
-func ParseStatementLog(query string, t *Transaction) {
+func ParseStatementLog(query string, t *Transaction, dbConnection *database.Database) {
 	statementLog := strings.Split(query, "### ")
 
 	//time when the query was executed on db engine YYMMDD hh:mm:ss
@@ -100,32 +101,37 @@ func ParseStatementLog(query string, t *Transaction) {
 	getQueryType(firstLine[0], firstLine[1], t)
 
 	setDbAndTable(firstLine, t)
-	parseContext(statementLog, t)
+	parseContext(statementLog, t, dbConnection)
 }
 
-func parseContext(statementLog []string, t *Transaction) {
+func parseContext(statementLog []string, t *Transaction, dbConnection *database.Database) {
 	switch t.Type {
 	case "INSERT":
 		t.Data["id_"+t.Table] = strings.Split(strings.Split(statementLog[3], " /*")[0], "=")[1]
 	case "UPDATE":
 		t.Data["id_"+t.Table] = strings.Split(strings.Split(statementLog[3], " /*")[0], "=")[1]
+		setOld(statementLog, t, dbConnection)
 	case "DELETE":
+		setOld(statementLog, t, dbConnection)
 	default:
 		return
 	}
-
-	setOld(statementLog, t)
 }
 
-func setOld(statementLog []string, t *Transaction) {
-	for i := len(statementLog) - 1; i > 2; i-- {
+func setOld(statementLog []string, t *Transaction, dbConnection *database.Database) {
+	tableFields, _ := dbConnection.GetFieldNames(t.Table, t.Database)
+	fieldIndex := 0
+
+	for i := 3; i < len(statementLog); i++ {
 		line := strings.TrimSpace(statementLog[i])
-		if line[0] != '@' {
+		if line == "SET" {
 			break
 		}
 		clearedLine := strings.Split(line, "/*")[0]
 		fieldValue := strings.Split(strings.TrimSpace(clearedLine), "=")
-		t.Old[fieldValue[0]] = fieldValue[1]
+
+		t.Old[tableFields[fieldIndex]] = fieldValue[1]
+		fieldIndex += 1
 	}
 }
 
