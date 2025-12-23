@@ -12,50 +12,53 @@ services:
   #  volumes:
   #    - mysql-data:/var/lib/mysql
   #    - ./my.cnf:/etc/mysql/my.cnf
-
   
-  #mariadb:
-  #  image: mariadb
-  #  container_name: mariadb
-  #  environment:
-  #    MARIADB_ROOT_PASSWORD: example-password #oi
-  #    MARIADB_DATABASE: example-db #database_name
-  #    MARIADB_USER: example-user
-  #    MARIADB_PASSWORD: example-password-user
-  #  ports:
-  #    - "3306:3306"
-  #  command: 
-  #    [
-  #      "--server-id=1",
-  #      "--log-bin=mariadb-bin",
-  #      "--binlog-format=ROW",
-  #      "--expire-logs-days=7",
-  #      "--max-binlog-size=100M"
-  #    ]
-  #  networks:
-  #    - app-network
-  #  #volumes:
-      #- ./mariadb.cnf:/etc/mysql/my.cnf
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: example-password #oi
+      MARIADB_DATABASE: example-db #database_name
+      MARIADB_USER: example-user
+      MARIADB_PASSWORD: example-password-user
+    ports:
+      - "3306:3306"
+    command: 
+      [
+        "--server-id=1",
+        "--log-bin=mariadb-bin",
+        "--binlog-format=ROW",
+        "--expire-logs-days=7",
+        "--max-binlog-size=100M"
+      ]
     # RUN ON MARIADB TERMINAL mariadb-binlog --base64-output=decode-rows --start-datetime="2025-12-18 16:12:00" -vv mariadb-bin.000002
     #SHOW BINARY LOGS;
     #SHOW VARIABLES LIKE '%log_bin%';
+    #SHOW COLUMNS FROM demo;
     
-  #adminer:
-  #  image: adminer
-  #  restart: always
-  #  ports:
-  #    - 8080:8080
-  #  networks:
-  #    - app-network
-#
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
   #dumont:
   #  image: dumont
   #  depends_on: mariadb
   #  ports:
   #    - 3000:3000
-  #  user: "${UID}:${GID}"
-  #  networks:
-  #    - app-network
+  #  build:
+  #    dockerfile: Dockerfile
+  #  environment:
+  #    DATABASE_NAME: example-db
+  #    DATABASE_PASSWORD: example-password
+  #    DATABASE_USER: root
+  #    DATABASE_HOST: mariadb
+  #    DATABASE_PORT: 3306
+  #    EXECUTE_INTERVAL: 180
+  #    MAX_CONSUMERS: 3
+  #    PRODUCER_HOST: amqp://admin:admin@rabbitmq:5672/
+  #    PRODUCER_QUEUE_NAME: dumont
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -89,11 +92,3 @@ services:
   #    --filter=include:example-db.*
   #    --producer=rabbitmq
   #    --log_level=debug
-
-volumes:
-  mysql-data:
-    driver: local
-
-networks:
-  app-network:
-    driver: bridge
