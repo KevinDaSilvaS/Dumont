@@ -21,7 +21,7 @@ For future releases the main goals would be:
 - Add web server to provide statistics and prometheus metrics
 - Add support to other remaining actions(~~DELETE~~, CREATE TABLE, ALTER TABLE, DROP TABLE, etc)
 - ~~Add fetch from remote feature as it will be unlikely the db will be at the same level than dumont~~ [ :white_check_mark: ] Done :rocket:
-- Make Dockerfile and compose file work
+- Make Dockerfile image work on compose file(currently receiving a permission denied error)
 - ~~Add logs instead of Println~~ [ :white_check_mark: ] Done :rocket:
 - Add more producers
 - ~~Add previous values to the Old field map on updates~~ [ :white_check_mark: ] Done :rocket:
@@ -53,11 +53,14 @@ Delete: ` {"Database":"example-db","Table":"people","Type":"DELETE","Ts":1766432
 - DATABASE_HOST       = "127.0.0.1"
 - DATABASE_PORT       = "3306"
 - EXECUTE_INTERVAL    = "3" time in seconds, dumont will read binlog every X seconds set on EXECUTE_INTERVAL
-- MAX_CONSUMERS       = "3" Number of concurrent reader consumers for bin log files, Ex: if I have 6 binlog files and three consumers it will likely be distributed between the consumers so each will read 2 files
+- MAX_CONSUMERS       = "3" Number of concurrent reader consumers for bin log files, Ex: if I have 6 binlog files and three consumers ideally it will very likely distribute 2 files per consumer
 - PRODUCER_HOST       = "amqp://admin:admin@localhost:5672/"
 - PRODUCER_QUEUE_NAME = "dumont"
 
 ### Running it
+- install mariadb-binlog tool
 - cd dumont
-- go build
+- podman compose -f ./docker-compose.yml up --detach
+- set env
+- <span style="background:dimgrey;padding:0.5%;color:orange;border-radius:5%"> <span style="color: blue; font-weight: bold;">go</span> build </span>
 - ./dumont
