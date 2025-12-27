@@ -1,23 +1,19 @@
-FROM golang as builder
+FROM mariadb as builder
+
+RUN apt-get update
+
+RUN apt-get install golang -y
 
 RUN mkdir dumont
 
-RUN cd dumont
+WORKDIR /dumont
 
 COPY . .
 
-RUN go build
+RUN go build -o dumont .
 
-RUN apt update
-RUN apt install -y mariadb-client
+FROM mariadb
 
-#FROM mariadb
+COPY --from=builder dumont/dumont .
 
-#FROM ubuntu
-
-
-#RUN mkdir dumont
-#COPY --from=builder / /dumont
-#RUN cd dumont
-#
 CMD ./dumont
