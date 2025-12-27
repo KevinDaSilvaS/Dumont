@@ -15,7 +15,6 @@ type Config struct {
 	MaxConsumers      int
 	ProducerHost      string
 	ProducerQueueName string
-	ReadFromRemote    bool
 }
 
 func LoadEnv() Config {
@@ -40,7 +39,7 @@ func SetEnvExample() {
 	os.Setenv("DATABASE_USER", "root")
 	os.Setenv("DATABASE_HOST", "127.0.0.1")
 	os.Setenv("DATABASE_PORT", "3306")
-	os.Setenv("EXECUTE_INTERVAL", "3")
+	os.Setenv("EXECUTE_INTERVAL", "10")
 	os.Setenv("MAX_CONSUMERS", "3")
 	os.Setenv("PRODUCER_HOST", "amqp://admin:admin@localhost:5672/")
 	os.Setenv("PRODUCER_QUEUE_NAME", "dumont")
