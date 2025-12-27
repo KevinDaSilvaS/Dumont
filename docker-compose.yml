@@ -1,24 +1,10 @@
-services:
-  #mysql:
-  #  image: mysql
-  #  container_name: mysql
-  #  environment:
-  #    MYSQL_ROOT_PASSWORD: example-password
-  #    MYSQL_DATABASE: example-db
-  #    MYSQL_USER: example-user
-  #    MYSQL_PASSWORD: example-password-user
-  #  ports:
-  #    - "3306:3306"
-  #  volumes:
-  #    - mysql-data:/var/lib/mysql
-  #    - ./my.cnf:/etc/mysql/my.cnf
-  
+services:  
   mariadb:
     image: mariadb
     container_name: mariadb
     environment:
-      MARIADB_ROOT_PASSWORD: example-password #oi
-      MARIADB_DATABASE: example-db #database_name
+      MARIADB_ROOT_PASSWORD: example-password
+      MARIADB_DATABASE: example-db
       MARIADB_USER: example-user
       MARIADB_PASSWORD: example-password-user
     ports:
@@ -29,36 +15,21 @@ services:
         "--log-bin=mariadb-bin",
         "--binlog-format=ROW",
         "--expire-logs-days=7",
-        "--max-binlog-size=100M"
+        "--max-binlog-size=100M",
+        "--bind-address=0.0.0.0"
       ]
-    # RUN ON MARIADB TERMINAL mariadb-binlog --base64-output=decode-rows --start-datetime="2025-12-18 16:12:00" -vv mariadb-bin.000002
-    #SHOW BINARY LOGS;
-    #SHOW VARIABLES LIKE '%log_bin%';
-    #SHOW COLUMNS FROM demo;
+
+    #DEBUG COMMANDS
+    # - RUN ON MARIADB TERMINAL(gets the binlog) mariadb-binlog --base64-output=decode-rows --start-datetime="2025-12-18 16:12:00" -vv mariadb-bin.000002
+    # - (gets the binlog filenames) SHOW BINARY LOGS;
+    # - (get binlog variables like the binlog path for example) SHOW VARIABLES LIKE '%log_bin%';
+    # - (gets the field names in a table) SHOW COLUMNS FROM demo;
     
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
-
-  #dumont:
-  #  image: dumont
-  #  depends_on: mariadb
-  #  ports:
-  #    - 3000:3000
-  #  build:
-  #    dockerfile: Dockerfile
-  #  environment:
-  #    DATABASE_NAME: example-db
-  #    DATABASE_PASSWORD: example-password
-  #    DATABASE_USER: root
-  #    DATABASE_HOST: mariadb
-  #    DATABASE_PORT: 3306
-  #    EXECUTE_INTERVAL: 180
-  #    MAX_CONSUMERS: 3
-  #    PRODUCER_HOST: amqp://admin:admin@rabbitmq:5672/
-  #    PRODUCER_QUEUE_NAME: dumont
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -69,7 +40,28 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
-#
+
+  dumont:
+    image: dumont
+    depends_on:
+      - mariadb
+      - rabbitmq
+    restart: always
+    ports:
+      - 3000:3000
+    build:
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_NAME: example-db
+      DATABASE_PASSWORD: example-password
+      DATABASE_USER: root
+      DATABASE_HOST: mariadb
+      DATABASE_PORT: 3306
+      EXECUTE_INTERVAL: 30
+      MAX_CONSUMERS: 3
+      PRODUCER_HOST: amqp://admin:admin@rabbitmq:5672/
+      PRODUCER_QUEUE_NAME: dumont
+
   #maxwell:
   #  image: zendesk/maxwell:latest
   #  container_name: maxwell
@@ -91,4 +83,4 @@ services:
   #    --rabbitmq_exchange_durable=true
   #    --filter=include:example-db.*
   #    --producer=rabbitmq
-  #    --log_level=debug
+  #    --log_level=debug.

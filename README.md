@@ -21,7 +21,7 @@ For future releases the main goals would be:
 - Add web server to provide statistics and prometheus metrics
 - Add support to other remaining actions(~~DELETE~~, CREATE TABLE, ALTER TABLE, DROP TABLE, etc)
 - ~~Add fetch from remote feature as it will be unlikely the db will be at the same level than dumont~~ [ :white_check_mark: ] Done :rocket:
-- Make Dockerfile image work on compose file(currently receiving a permission denied error)
+- ~~Make Dockerfile image work on compose file(currently receiving a permission denied error)~~ [ :white_check_mark: ] Done :rocket:
 - ~~Add logs instead of Println~~ [ :white_check_mark: ] Done :rocket:
 - Add more producers
 - ~~Add previous values to the Old field map on updates~~ [ :white_check_mark: ] Done :rocket:
@@ -58,9 +58,14 @@ Delete: ` {"Database":"example-db","Table":"people","Type":"DELETE","Ts":1766432
 - PRODUCER_QUEUE_NAME = "dumont"
 
 ### Running it
-- install mariadb-binlog tool
-- cd dumont
-- podman compose -f ./docker-compose.yml up --detach
-- set env
-- <span style="background:dimgrey;padding:0.5%;color:orange;border-radius:5%"> <span style="color: blue; font-weight: bold;">go</span> build </span>
-- ./dumont
+
+  - ### Using podman( or your favorite container tool :) )
+     - podman compose -f ./docker-compose.yml up --detach
+
+  - ### Running manually
+    - install mariadb-binlog tool
+    - cd dumont
+    - podman compose -f ./docker-compose.yml up --detach
+    - set env
+    - <span style="background:dimgrey;padding:0.5%;color:orange;border-radius:5%"> <span style="color: blue; font-weight: bold;">go</span> build </span>
+    - ./dumont

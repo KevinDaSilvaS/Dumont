@@ -13,7 +13,6 @@ import (
 - Add Server to provide statistics and prometheus metrics(maybe redis or sqlite???)
 - Add other transaction types DELETE, CREATE TABLE, ALTER TABLE, DROP TABLE
 - Add pagination??(maria db binlog paginate results)
-- Make Dockerfile and compose file work( currently it doesn't :c )
 */
 
 func main() {
