@@ -63,9 +63,9 @@ Delete: ` {"Database":"example-db","Table":"people","Type":"DELETE","Ts":1766432
      - podman compose -f ./docker-compose.yml up --detach
 
   - ### Running manually
-    - install mariadb-binlog tool
+    - install mariadb-server and mariadb-client
+    - install rabbitmq
     - cd dumont
-    - podman compose -f ./docker-compose.yml up --detach
     - set env
     - <span style="background:dimgrey;padding:0.5%;color:orange;border-radius:5%"> <span style="color: blue; font-weight: bold;">go</span> build </span>
     - ./dumont
